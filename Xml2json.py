@@ -9,7 +9,7 @@ else:
 	import simplejson as json
 	from ordereddict import OrderedDict
 
-def newViewWithText(text):
+def newViewWithText(text, syntax):
 	newView = sublime.active_window().new_file()
 	if sublime.version() >= '3000':
 		newView.run_command('append',{'characters':text})
@@ -17,6 +17,10 @@ def newViewWithText(text):
 		newEdit = newView.begin_edit()
 		newView.insert(newEdit,0,text)
 		newView.end_edit(newEdit)
+	if 'xml' == syntax:
+		newView.set_syntax_file('Packages/XML/XML.tmLanguage')
+	elif 'json' == syntax:
+		newView.set_syntax_file('Packages/JavaScript/JSON.tmLanguage')
 
 def xml2json(fulltext,pretty=False):
 	try:
@@ -35,14 +39,14 @@ class Xml2jsonCommand(sublime_plugin.TextCommand):
 		fulltext = self.view.substr(sublime.Region(0, self.view.size()))
 		jsonStr = xml2json(fulltext,False)
 		if jsonStr:
-			newViewWithText(jsonStr)
+			newViewWithText(jsonStr, 'json')
 
 class Xml2jsonprettyCommand(sublime_plugin.TextCommand):
 	def run(self,edit):
 		fulltext = self.view.substr(sublime.Region(0, self.view.size()))
 		jsonStr = xml2json(fulltext,True)
 		if jsonStr:
-			newViewWithText(jsonStr)
+			newViewWithText(jsonStr, 'json')
 
 def json2xml(fulltext,pretty=False):
 	try:
@@ -67,10 +71,10 @@ class Json2xmlCommand(sublime_plugin.TextCommand):
 		fulltext = self.view.substr(sublime.Region(0, self.view.size()))
 		xmlStr = json2xml(fulltext,False)
 		if xmlStr:
-			newViewWithText(xmlStr)
+			newViewWithText(xmlStr, 'xml')
 class Json2xmlprettyCommand(sublime_plugin.TextCommand):
 	def run(self,edit):
 		fulltext = self.view.substr(sublime.Region(0, self.view.size()))
 		xmlStr = json2xml(fulltext,True)
 		if xmlStr:
-			newViewWithText(xmlStr)
+			newViewWithText(xmlStr, 'xml')
